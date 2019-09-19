@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"testing"
-	"gotest.tools/assert"
 )
 
 var easySudoku = [][]int{
@@ -55,12 +54,18 @@ var hardSolution = [][]int{
 }
 
 func TestSudokuSolver(t *testing.T) {
-	var easyComplete = solve(easySudoku, easySolution)
+	easyComplete := make(chan bool, 1)
+	go func() {
+		easyComplete <- solve(easySudoku, easySolution)
+	}()
 
-	var hardComplete = solve(hardSudoku, hardSolution)
+	hardComplete := make(chan bool, 1)
+	go func() {
+		hardComplete <- solve(hardSudoku, hardSolution)
+	}()
 
-	fmt.Printf("Easy Sudoku Solved?: %v\n", easyComplete)
+	fmt.Printf("Easy Sudoku Solved?: %v\n", <-easyComplete)
 	fmt.Println(easySudoku)
-	fmt.Printf("Hard Sudoku Solved?: %v\n", hardComplete)
+	fmt.Printf("Hard Sudoku Solved?: %v\n", <-hardComplete)
 	fmt.Println(hardSudoku)
 }
