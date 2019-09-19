@@ -15,15 +15,33 @@ import "fmt"
 // want to see how you approach coding problems, so please show your working as
 // best you can - bonus points if you use git to record your working history!
 
-func solve(puzzle [][]int) [][]int {
-	fmt.Println(validateSquares(puzzle))
-	return puzzle
+func solve(puzzle [][]int, completePuzzle [][]int) bool {
+	if compare(puzzle, completePuzzle) {
+		return true
+	}
+	for nRow := 0; nRow < 9; nRow++ {
+		for nCol := 0; nCol < 9; nCol++ {
+			num := puzzle[nRow][nCol]
+			if num == 0 {
+				for newNum := 1; newNum <= 9; newNum++ {
+					puzzle[nRow][nCol] = newNum
+					if validate(puzzle) {
+						if solve(puzzle, completePuzzle) {
+							return true
+						}
+						puzzle[nRow][nCol] = 0
+					}
+				}
+			}
+		}
+	}
+	return false
 }
 
 func compare(puzzle [][]int, completePuzzle [][]int) bool {
-	for row := 0; row < 9; row++ {
-		for col := 0; col < 9; col++ {
-			if completePuzzle[row][col] != puzzle[row][col] {
+	for nRow := 0; nRow < 9; nRow++ {
+		for nCol := 0; nCol < 9; nCol++ {
+			if completePuzzle[nRow][nCol] != puzzle[nRow][nCol] {
 				return false
 			}
 		}
@@ -31,10 +49,14 @@ func compare(puzzle [][]int, completePuzzle [][]int) bool {
 	return true
 }
 
-func validateRows(puzzle [][]int) bool {
-	for row := 0; row < 9; row++ {
+func validate(puzzle [][]int) bool {
+	return !(!validatenRows(puzzle) || !validatenColumns(puzzle) || !validateSquares(puzzle))
+}
+
+func validatenRows(puzzle [][]int) bool {
+	for nRow := 0; nRow < 9; nRow++ {
 		counter := make([]int, 10)
-		for _, num := range puzzle[row] {
+		for _, num := range puzzle[nRow] {
 			if num != 0 {
 				counter[num]++
 			}
@@ -46,11 +68,11 @@ func validateRows(puzzle [][]int) bool {
 	return true
 }
 
-func validateColumns(puzzle [][]int) bool {
-	for col := 0; col < 9; col++ {
+func validatenColumns(puzzle [][]int) bool {
+	for nCol := 0; nCol < 9; nCol++ {
 		counter := make([]int, 10)
-		for row := 0; row <9; row++ {
-			num := puzzle[row][col]
+		for nRow := 0; nRow <9; nRow++ {
+			num := puzzle[nRow][nCol]
 			if num != 0 {
 				counter[num]++
 			}
@@ -63,12 +85,12 @@ func validateColumns(puzzle [][]int) bool {
 }
 
 func validateSquares(puzzle [][]int) bool {
-	for row := 0; row < 9; row += 3 {
-		for col := 0; col < 9; col += 3 {
+	for nRow := 0; nRow < 9; nRow += 3 {
+		for nCol := 0; nCol < 9; nCol += 3 {
 			counter := make([]int, 10)
-			for rowSq := row; rowSq < row + 3; rowSq++ {
-				for colSq := col; colSq < col + 3; colSq++ {
-					num := puzzle[rowSq][colSq]
+			for nRowSq := nRow; nRowSq < nRow + 3; nRowSq++ {
+				for nColSq := nCol; nColSq < nCol + 3; nColSq++ {
+					num := puzzle[nRowSq][nColSq]
 					if num != 0 {
 						counter[num]++
 					}
@@ -140,10 +162,12 @@ var hardSolution = [][]int{
 }
 
 func main() {
-	var easyComplete = compare(solve(easySudoku), easySolution)
+	var easyComplete = solve(easySudoku, easySolution)
 
-	var hardComplete = compare(solve(hardSudoku), hardSolution)
+	var hardComplete = solve(hardSudoku, hardSolution)
 
 	fmt.Printf("Easy Sudoku Solved?: %v\n", easyComplete)
+	fmt.Println(easySudoku)
 	fmt.Printf("Hard Sudoku Solved?: %v\n", hardComplete)
+	fmt.Println(hardSudoku)
 }
