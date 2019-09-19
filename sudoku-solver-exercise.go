@@ -16,7 +16,7 @@ import "fmt"
 // best you can - bonus points if you use git to record your working history!
 
 func solve(puzzle [][]int) [][]int {
-	fmt.Println(checkRows(puzzle))
+	fmt.Println(validateColumns(puzzle))
 	return puzzle
 }
 
@@ -47,6 +47,18 @@ func validateRows(puzzle [][]int) bool {
 }
 
 func validateColumns(puzzle [][]int) bool {
+	for col := 0; col < 9; col++ {
+		counter := make([]int, 10)
+		for row := 0; row <9; row++ {
+			num := puzzle[row][col]
+			if (num != 0) {
+				counter[num]++
+			}
+			if hasDuplicates(counter) {
+				return false
+			}
+		}
+	}
 	return true
 }
 
