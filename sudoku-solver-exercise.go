@@ -16,6 +16,7 @@ import "fmt"
 // best you can - bonus points if you use git to record your working history!
 
 func solve(puzzle [][]int) [][]int {
+	fmt.Println(checkRows(puzzle))
 	return puzzle
 }
 
@@ -28,6 +29,38 @@ func compare(puzzle [][]int, completePuzzle [][]int) bool {
 		}
 	}
 	return true
+}
+
+func validateRows(puzzle [][]int) bool {
+	for row := 0; row < 9; row++ {
+		counter := make([]int, 10)
+		for _, num := range puzzle[row] {
+			if (num != 0) {
+				counter[num]++
+			}
+			if hasDuplicates(counter) {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func validateColumns(puzzle [][]int) bool {
+	return true
+}
+
+func validateSquares(puzzle [][]int) bool {
+	return true
+}
+
+func hasDuplicates(numbers []int) bool {
+	for _, num := range numbers {
+		if num > 1 {
+			return true
+		}
+	}
+	return false
 }
 
 var easySudoku = [][]int{
